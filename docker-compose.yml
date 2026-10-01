@@ -1,0 +1,103 @@
+name: 'guacamole-bastion'
+
+services:
+  postgres:
+    image: postgres:${DOCKER_POSTGRES_IMAGE_TAG:-17-alpine}
+    container_name: postgres
+    restart: always
+    ports: 
+      - "${POSTGRES_HOST_BIND:-127.0.0.1}:${POSTGRES_PORT:-5432}:5432"
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-guacamole}
+      POSTGRES_USER: ${POSTGRES_USER:-guacamole}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+    volumes:
+      - ./postgres_data:/var/lib/postgresql/data
+      - ./init-scripts/initdb.sql:/docker-entrypoint-initdb.d/initdb.sql:ro
+    networks:
+      - guacamole_net
+
+  guacd:
+    image: guacamole/guacd:${DOCKER_GUACAMOLE_IMAGE_TAG:-1.6.0}
+    container_name: guacamole-guacd
+    restart: always
+    user: "${GUACAMOLE_UID:-1000}:1000"
+    dns:
+      - ${DNS_SERVER_PRIMARY}
+      - ${DNS_SERVER_SECONDARY}
+    dns_search: ${DNS_SEARCH_DOMAIN}
+    environment:
+      HOME: /tmp
+    volumes:
+      - ./guacamole_data/shares:/var/guacamole/shares
+      - ./guacamole_data/recordings:/var/lib/guacamole/recordings:rw
+    networks:
+      - guacamole_net
+
+  guacamole:
+    # Закомментируйте, если планируете использовать корневой сертификат LDAPS
+    #image: guacamole/guacamole:${DOCKER_GUACAMOLE_IMAGE_TAG:-1.6.0}
+    # Раскомментируйте, если планируете использовать корневой сертификат LDAPS
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        - DOCKER_GUACAMOLE_IMAGE_TAG=${DOCKER_GUACAMOLE_IMAGE_TAG:-1.6.0}
+    container_name: guacamole-web
+    restart: always
+    user: "${GUACAMOLE_UID:-1000}:1001"
+    dns:
+      - ${DNS_SERVER_PRIMARY}
+      - ${DNS_SERVER_SECONDARY}
+    dns_search: ${DNS_SEARCH_DOMAIN}
+    ports: 
+      - "${GUACAMOLE_WEB_HOST_BIND:-127.0.0.1}:${GUACAMOLE_WEB_PORT:-8080}:8080"
+    environment:
+      GUACD_PORT: 4822
+      GUACD_HOSTNAME: guacd
+      
+      POSTGRESQL_HOSTNAME: postgres
+      POSTGRESQL_DATABASE: ${POSTGRES_DB:-guacamole}
+      POSTGRESQL_USER: ${POSTGRES_USER:-guacamole}
+      POSTGRESQL_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+
+      TOTP_ENABLED: ${TOTP_ENABLE:-false}
+      TOTP_ISSUER: ${TOTP_ISSUER:-Apache Guacamole}
+      TOTP_DIGITS: 6
+      TOTP_PERIOD: 30
+     
+      RECORDING_ENABLED: "true"
+      RECORDING_SEARCH_PATH: "/var/lib/guacamole/recordings"
+
+      REMOTE_IP_VALVE_ENABLED: true
+
+      LDAP_HOSTNAME: ${LDAP_HOSTNAME}
+      LDAP_PORT: ${LDAP_PORT}
+      
+
+      LDAP_ENCRYPTION_METHOD: ${LDAP_ENCRYPTION_METHOD}
+
+      LDAP_SEARCH_BIND_DN: ${LDAP_SEARCH_BIND_DN}
+      LDAP_SEARCH_BIND_PASSWORD: ${LDAP_SEARCH_BIND_PASSWORD}
+      LDAP_USER_BASE_DN: ${LDAP_USER_BASE_DN}
+      LDAP_USERNAME_ATTRIBUTE: ${LDAP_USERNAME_ATTRIBUTE}
+      LDAP_USER_SEARCH_FILTER: ${LDAP_USER_SEARCH_FILTER}
+      
+      LDAP_GROUP_BASE_DN: ${LDAP_GROUP_BASE_DN}
+      LDAP_GROUP_SEARCH_FILTER: ${LDAP_GROUP_SEARCH_FILTER}
+      LDAP_GROUP_MEMBER_ATTRIBUTE: ${LDAP_GROUP_MEMBER_ATTRIBUTE}
+
+      LDAP_FOLLOW_REFERRALS: "${LDAP_FOLLOW_REFERRALS}"
+      LDAP_DEREFERENCE_ALIASES: "${LDAP_DEREFERENCE_ALIASES}"
+      LDAP_MAX_SEARCH_RESULTS: "${LDAP_MAX_SEARCH_RESULTS}"
+    volumes:
+      - ./guacamole_data/recordings:/var/lib/guacamole/recordings:ro
+    networks:
+      - guacamole_net
+    depends_on:
+      - postgres
+      - guacd
+
+networks:
+  guacamole_net:
+    driver: bridge

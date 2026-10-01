@@ -1,0 +1,7 @@
+postgres_data
+guacamole_data
+
+init-scripts/initdb.sql
+
+*.crt
+*.env
