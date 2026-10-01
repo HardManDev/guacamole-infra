@@ -16,7 +16,7 @@ export GUAC_VERSION=1.6.0
 1. Склонируйте репозиторий.
 ```bash
 cd /opt
-git clone https://github.com/
+git clone https://github.com/HardManDev/guacamole-bastion.git
 ```
 2. Измените права на директорию.
 ```bash
