@@ -1,4 +1,4 @@
-# Apache Guacamole инфраструктура
+# Инфраструктура Apache Guacamole
 В этом репозитории находится всё необходимое для развёртывания [Apache Guacamole](https://guacamole.apache.org/) на Linux-сервере. Отличительной особенностью является наличие конфигурации LDAPS, TOTP (двухфакторной аутентификации), session recording и file share, а также конфигурация Nginx.
 
 ## Подготовка к установке
