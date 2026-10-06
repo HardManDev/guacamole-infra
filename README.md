@@ -25,6 +25,8 @@ sudo chown user:user -R ./guacamole-bastion
 ```
 3. Извлеките скрипт инициализации базы данных из официального образа Guacamole.
 ```bash
+cd guacamole-bastion
+
 sudo docker run --rm guacamole/guacamole:$GUAC_VERSION /opt/guacamole/bin/initdb.sh --postgresql > ./init-scripts/initdb.sql
 ```
 4. Подготовьте конфигурацию, используя переменные окружения.
@@ -38,10 +40,10 @@ sudo docker compose up -d
 6. Проверьте запуск.
 ```bash
 sudo docker ps
-#CONTAINER ID   IMAGE                         COMMAND                  CREATED       STATUS                 PORTS                      NAMES
-#efa355643e58   guacamole-bastion-guacamole   "/opt/guacamole/bin/…"   9 hours ago   Up 9 hours             127.0.0.1:8080->8080/tcp   guacamole-web
-#6347c2078ff0   postgres:17-alpine            "docker-entrypoint.s…"   9 hours ago   Up 9 hours             127.0.0.1:5432->5432/tcp   postgres
-#418be0e8da44   guacamole/guacd:1.6.0         "/opt/guacamole/entr…"   9 hours ago   Up 9 hours (healthy)   4822/tcp                   guacamole-guacd
+# CONTAINER ID   IMAGE                         COMMAND                  CREATED       STATUS                 PORTS                      NAMES
+# efa355643e58   guacamole-bastion-guacamole   "/opt/guacamole/bin/…"   9 hours ago   Up 9 hours             127.0.0.1:8080->8080/tcp   guacamole-web
+# 6347c2078ff0   postgres:17-alpine            "docker-entrypoint.s…"   9 hours ago   Up 9 hours             127.0.0.1:5432->5432/tcp   postgres
+# 418be0e8da44   guacamole/guacd:1.6.0         "/opt/guacamole/entr…"   9 hours ago   Up 9 hours (healthy)   4822/tcp                   guacamole-guacd
 
 sudo ss -tulpn | grep docker-proxy
 # tcp   LISTEN 0      4096          127.0.0.1:8080       0.0.0.0:*    users:(("docker-proxy",pid=29008,fd=8)
@@ -51,6 +53,8 @@ sudo ss -tulpn | grep docker-proxy
 ```bash
 # Подставьте такой же UID и GID, как в переменной GUACAMOLE_UID
 sudo chown 1000:1000 -R ./guacamole_data/
+# Перезапустите контейнеры
+docker compose up -d --force-recreate
 ```
 
 ## Установка Nginx
@@ -67,7 +71,7 @@ sudo apt install nginx -y
 - Поместите ключ по следующему пути:
 `/etc/ssl/private/guacamole.key`
 
-> [!NOTE]
+> [!TIP]
 > Вы также можете сгенерировать временный сертификат.
 
 ```bash
@@ -95,6 +99,14 @@ sudo systemctl reload nginx
 ```bash
 curl -k -I https://localhost/gucamole/
 ```
+
+Вы так же можете перейти на страницу в веб-браузере и проверить работу.
+
+**Логин по умолчанию:** `guacadmin` \
+**Пароль:** `guacadmin`
+
+> [!CAUTION]
+> Обязательно сразу после успешного входа измините пароль пользователя `guacadmin`!
 
 ## Конфигурация LDAPS
 > Apache Guacamole имеет возможность авторизации с использованием доменных учётных записей при помощи LDAP. В данном репозитории мы рассмотрим именно конфигурацию защищённой версии LDAP — LDAPS.

@@ -36,13 +36,13 @@ services:
 
   guacamole:
     # Закомментируйте, если планируете использовать корневой сертификат LDAPS
-    #image: guacamole/guacamole:${DOCKER_GUACAMOLE_IMAGE_TAG:-1.6.0}
+    image: guacamole/guacamole:${DOCKER_GUACAMOLE_IMAGE_TAG:-1.6.0}
     # Раскомментируйте, если планируете использовать корневой сертификат LDAPS
-    build:
-      context: .
-      dockerfile: Dockerfile
-      args:
-        - DOCKER_GUACAMOLE_IMAGE_TAG=${DOCKER_GUACAMOLE_IMAGE_TAG:-1.6.0}
+    #build:
+    #  context: .
+    #  dockerfile: Dockerfile
+    #  args:
+    #    - DOCKER_GUACAMOLE_IMAGE_TAG=${DOCKER_GUACAMOLE_IMAGE_TAG:-1.6.0}
     container_name: guacamole-web
     restart: always
     user: "${GUACAMOLE_UID:-1000}:1001"
