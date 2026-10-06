@@ -22,11 +22,11 @@ git clone https://github.com/HardManDev/guacamole-infra.git
 ```bash
 # Подставьте необходимое имя пользователя и группы
 sudo chown user:user -R ./guacamole-infra
+
+cd guacamole-infra
 ```
 3. Извлеките скрипт инициализации базы данных из официального образа Guacamole.
 ```bash
-cd guacamole-infra
-
 sudo docker run --rm guacamole/guacamole:$GUAC_VERSION /opt/guacamole/bin/initdb.sh --postgresql > ./init-scripts/initdb.sql
 ```
 4. Подготовьте конфигурацию, используя переменные окружения.
