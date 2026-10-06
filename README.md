@@ -1,4 +1,4 @@
-# Bastion сервер основанный на Apache Guacamole
+# Apache Guacamole инфраструктура
 В этом репозитории находится всё необходимое для развёртывания [Apache Guacamole](https://guacamole.apache.org/) на Linux-сервере. Отличительной особенностью является наличие конфигурации LDAPS, TOTP (двухфакторной аутентификации), session recording и file share, а также конфигурация Nginx.
 
 ## Подготовка к установке
@@ -16,16 +16,16 @@ export GUAC_VERSION=1.6.0
 1. Склонируйте репозиторий.
 ```bash
 cd /opt
-git clone https://github.com/HardManDev/guacamole-bastion.git
+git clone https://github.com/HardManDev/guacamole-infra.git
 ```
 2. Измените права на директорию.
 ```bash
 # Подставьте необходимое имя пользователя и группы
-sudo chown user:user -R ./guacamole-bastion
+sudo chown user:user -R ./guacamole-infra
 ```
 3. Извлеките скрипт инициализации базы данных из официального образа Guacamole.
 ```bash
-cd guacamole-bastion
+cd guacamole-infra
 
 sudo docker run --rm guacamole/guacamole:$GUAC_VERSION /opt/guacamole/bin/initdb.sh --postgresql > ./init-scripts/initdb.sql
 ```
@@ -41,7 +41,7 @@ sudo docker compose up -d
 ```bash
 sudo docker ps
 # CONTAINER ID   IMAGE                         COMMAND                  CREATED       STATUS                 PORTS                      NAMES
-# efa355643e58   guacamole-bastion-guacamole   "/opt/guacamole/bin/…"   9 hours ago   Up 9 hours             127.0.0.1:8080->8080/tcp   guacamole-web
+# efa355643e58   guacamole-infra-guacamole   "/opt/guacamole/bin/…"   9 hours ago   Up 9 hours             127.0.0.1:8080->8080/tcp   guacamole-web
 # 6347c2078ff0   postgres:17-alpine            "docker-entrypoint.s…"   9 hours ago   Up 9 hours             127.0.0.1:5432->5432/tcp   postgres
 # 418be0e8da44   guacamole/guacd:1.6.0         "/opt/guacamole/entr…"   9 hours ago   Up 9 hours (healthy)   4822/tcp                   guacamole-guacd
 

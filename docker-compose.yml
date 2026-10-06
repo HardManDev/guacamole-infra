@@ -1,4 +1,4 @@
-name: 'guacamole-bastion'
+name: 'guacamole-infra'
 
 services:
   postgres:
