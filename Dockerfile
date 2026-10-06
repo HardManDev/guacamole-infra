@@ -1,5 +1,5 @@
-ARG DOCKER_GUACAMOLE_IMAGE_TAG=guacamole/guacamole:latest
-FROM guacamole/guacamole:${DOCKER_GUACAMOLE_IMAGE_TAG}
+ARG GUACAMOLE_VERSION
+FROM guacamole/guacamole:${GUACAMOLE_VERSION}
 
 USER root
 

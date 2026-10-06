@@ -3,5 +3,11 @@ guacamole_data
 
 init-scripts/initdb.sql
 
-*.crt
-*.env
+custom-ca-certificate.crt
+
+*.key
+*.pem
+*.pfx
+*.p12
+
+.env

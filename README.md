@@ -7,10 +7,10 @@
 3. Выберите тег версии Apache Guacamole, руководствуясь официальной страницей образа на [docker.io](https://hub.docker.com/r/guacamole/guacamole).
 ```bash
 # Подставьте необходимую версию или тег latest
-export GUAC_VERSION=latest
+export GUAC_VERSION=1.6.0
 ```
 > [!NOTE]
-> В данном репозитории используется версия latest, а также в конфигурации проекта эта версия используется по умолчанию.
+> В данном репозитории используется версия 1.6.0, а также в конфигурации проекта эта версия используется по умолчанию.
 
 ## Установка
 1. Склонируйте репозиторий.
@@ -43,7 +43,7 @@ sudo docker ps
 # CONTAINER ID   IMAGE                         COMMAND                  CREATED       STATUS                 PORTS                      NAMES
 # efa355643e58   guacamole-infra-guacamole   "/opt/guacamole/bin/…"   9 hours ago   Up 9 hours             127.0.0.1:8080->8080/tcp   guacamole-web
 # 6347c2078ff0   postgres:17-alpine            "docker-entrypoint.s…"   9 hours ago   Up 9 hours             127.0.0.1:5432->5432/tcp   postgres
-# 418be0e8da44   guacamole/guacd:latest         "/opt/guacamole/entr…"   9 hours ago   Up 9 hours (healthy)   4822/tcp                   guacamole-guacd
+# 418be0e8da44   guacamole/guacd:1.6.0         "/opt/guacamole/entr…"   9 hours ago   Up 9 hours (healthy)   4822/tcp                   guacamole-guacd
 
 sudo ss -tulpn | grep docker-proxy
 # tcp   LISTEN 0      4096          127.0.0.1:8080       0.0.0.0:*    users:(("docker-proxy",pid=29008,fd=8)
@@ -97,7 +97,7 @@ sudo systemctl reload nginx
 ```
 5. Проверьте работу Nginx при помощи curl или перейдите на веб-страницу вашего сервера.
 ```bash
-curl -k -I https://localhost/gucamole/
+curl -k -I https://localhost/guacamole/
 ```
 
 Вы так же можете перейти на страницу в веб-браузере и проверить работу.
@@ -106,7 +106,7 @@ curl -k -I https://localhost/gucamole/
 **Пароль:** `guacadmin`
 
 > [!CAUTION]
-> Обязательно сразу после успешного входа измините пароль пользователя `guacadmin`!
+> Обязательно сразу после успешного входа измените пароль пользователя `guacadmin`!
 
 ## Конфигурация LDAPS
 > Apache Guacamole имеет возможность авторизации с использованием доменных учётных записей при помощи LDAP. В данном репозитории мы рассмотрим именно конфигурацию защищённой версии LDAP — LDAPS.
@@ -116,17 +116,17 @@ curl -k -I https://localhost/gucamole/
 > Так как веб-интерфейс Apache Guacamole написан на Java, нам придётся поместить сертификат в оригинальный Docker-образ на этапе сборки. Для этого в проекте есть Dockerfile.
 
 1. Поместите корневой сертификат в корень проекта под именем `custom-ca-certificate.crt`.
-2. Измените `docker-compose.yml`.
+2. Измените `compose.yml`.
 ```yml
 ...
 # Закомментируйте, если планируете использовать корневой сертификат LDAPS
-#image: guacamole/guacamole:${DOCKER_GUACAMOLE_IMAGE_TAG:-latest}
+image: guacamole/guacamole:${DOCKER_GUACAMOLE_IMAGE_TAG}
 # Раскомментируйте, если планируете использовать корневой сертификат LDAPS
-build:
-  context: .
-  dockerfile: Dockerfile
-  args:
-    - DOCKER_GUACAMOLE_IMAGE_TAG=${DOCKER_GUACAMOLE_IMAGE_TAG:-latest}
+#build:
+#  context: .
+#  dockerfile: Dockerfile
+#  args:
+#    - GUACAMOLE_VERSION: ${DOCKER_GUACAMOLE_IMAGE_TAG}
 ...
 ```
 3. Измените конфигурацию .env для LDAP.
@@ -135,11 +135,11 @@ build:
 sudo docker compose up -d --force-recreate guacamole-web
 ```
 
-## Конфигурация переменых окружения (.env)
+## Конфигурация переменных окружения (.env)
 | Переменная                  | Необходимость | Значение по умолчанию | Описание |
 | --------------------------- | ------------- | ----------- | ----------- |
 | DOCKER_POSTGRES_IMAGE_TAG | required | 17-alpine | Тег Docker-образа postgres |
-| DOCKER_GUACAMOLE_IMAGE_TAG | required | latest | Тег Docker-образа guacamole |
+| DOCKER_GUACAMOLE_IMAGE_TAG | required | 1.6.0 | Тег Docker-образа guacamole |
 | POSTGRES_DB | required | guacamole | Имя базы данных |
 | POSTGRES_USER | required | guacamole | Имя пользователя базы данных |
 | POSTGRES_PASSWORD | required | postgres | Пароль базы данных. ОБЯЗАТЕЛЬНО изминте до первого запуска! |
