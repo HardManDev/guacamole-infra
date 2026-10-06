@@ -40,10 +40,11 @@ sudo docker compose up -d
 6. Проверьте запуск.
 ```bash
 sudo docker ps
-# CONTAINER ID   IMAGE                         COMMAND                  CREATED       STATUS                 PORTS                      NAMES
-# efa355643e58   guacamole-infra-guacamole   "/opt/guacamole/bin/…"   9 hours ago   Up 9 hours             127.0.0.1:8080->8080/tcp   guacamole-web
-# 6347c2078ff0   postgres:17-alpine            "docker-entrypoint.s…"   9 hours ago   Up 9 hours             127.0.0.1:5432->5432/tcp   postgres
-# 418be0e8da44   guacamole/guacd:1.6.0         "/opt/guacamole/entr…"   9 hours ago   Up 9 hours (healthy)   4822/tcp                   guacamole-guacd
+# CONTAINER ID   IMAGE                       COMMAND                  CREATED          STATUS                    PORTS                      NAMES
+# edade123fbe7   guacamole/guacamole:1.6.0   "/opt/guacamole/bin/…"   35 seconds ago   Up 27 seconds (healthy)   127.0.0.1:8080->8080/tcp   guacamole-web
+# fa3467bcb865   postgres:17-alpine          "docker-entrypoint.s…"   35 seconds ago   Up 33 seconds (healthy)   127.0.0.1:5432->5432/tcp   postgres
+# 8cdcf4f37de1   guacamole/guacd:1.6.0       "/opt/guacamole/entr…"   35 seconds ago   Up 33 seconds (healthy)   4822/tcp                   guacamole-guacd
+
 
 sudo ss -tulpn | grep docker-proxy
 # tcp   LISTEN 0      4096          127.0.0.1:8080       0.0.0.0:*    users:(("docker-proxy",pid=29008,fd=8)
