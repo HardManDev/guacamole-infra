@@ -135,6 +135,22 @@ image: guacamole/guacamole:${DOCKER_GUACAMOLE_IMAGE_TAG}
 ```bash
 sudo docker compose up -d --force-recreate guacamole-web
 ```
+## Полезная информация
+1. При настройке RDP подключения необходимо включить настройку `Trust host certificate on first use` - если RDP-хосты используют самоподписные сертификаты.
+2. В конфигурации подключения можно использовать шаблоны по типу `${GUAC_USERNAME}` подробнее о них вы можете узнать в [официальной документации](https://guacamole.apache.org/doc/gug/configuring-guacamole.html#parameter-tokens).
+
+### Конфигурация диска в параметрах подключения
+- Включить диск: ✅
+- Название диска: ✅
+- Путь диска: `/var/guacamole/shares/${GUAC_USERNAME}`
+- Автоматически создавать путь для диска ✅
+> В данной конфигурации директория `/var/guacamole/shares/` смонтирована в хостовую файловую систему ./gacamole_data/shares
+
+### Конфигурация записи экрана в параметрах подключения
+- Путь для записи: `/var/lib/guacamole/recordings/${GUAC_USERNAME}`
+- Название записи: `${HISTORY_UUID}`
+- Автоматически создавать путь для записи: ✅
+> В данной конфигурации директория `/var/guacamole/recordings/` смонтирована в хостовую файловую систему ./gacamole_data/recordings
 
 ## Конфигурация переменных окружения (.env)
 | Переменная                  | Необходимость | Значение по умолчанию | Описание |
