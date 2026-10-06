@@ -39,6 +39,12 @@ services:
       - ./guacamole_data/recordings:/var/lib/guacamole/recordings:rw
     networks:
       - guacamole_net
+    healthcheck:
+      test: ["CMD-SHELL", "nc -z 127.0.0.1 4822 || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
 
   guacamole:
     # Закомментируйте, если планируете использовать корневой сертификат LDAPS
